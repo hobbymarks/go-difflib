@@ -1,6 +1,7 @@
 // Package difflib is a partial port of Python difflib module.
 //
-// It provides tools to compare sequences of strings and generate textual diffs.
+// It provides tools to compare sequences of strings and generate textual
+// diffs.
 //
 // The following class and functions have been ported:
 //
@@ -162,11 +163,13 @@ func (m *SequenceMatcher) chainB() {
 	if m.IsJunk != nil {
 		junk := m.bJunk
 		for s, _ := range b2j {
+			fmt.Print("s in b2j:", s)
 			if m.IsJunk(s) {
 				junk[s] = struct{}{}
 			}
 		}
 		for s, _ := range junk {
+			fmt.Print("s in junk:", s)
 			delete(b2j, s)
 		}
 	}
@@ -199,12 +202,15 @@ func (m *SequenceMatcher) isBJunk(s string) bool {
 // If IsJunk is not defined:
 //
 // Return (i,j,k) such that a[i:i+k] is equal to b[j:j+k], where
-//     alo <= i <= i+k <= ahi
-//     blo <= j <= j+k <= bhi
+//
+//	alo <= i <= i+k <= ahi
+//	blo <= j <= j+k <= bhi
+//
 // and for all (i',j',k') meeting those conditions,
-//     k >= k'
-//     i <= i'
-//     and if i == i', j <= j'
+//
+//	k >= k'
+//	i <= i'
+//	and if i == i', j <= j'
 //
 // In other words, of all maximal matching blocks, return one that
 // starts earliest in a, and of all those maximal matching blocks that
@@ -367,7 +373,8 @@ func (m *SequenceMatcher) GetMatchingBlocks() []Match {
 //
 // 'd' (delete):   a[i1:i2] should be deleted, j1==j2 in this case.
 //
-// 'i' (insert):   b[j1:j2] should be inserted at a[i1:i1], i1==i2 in this case.
+// 'i' (insert):   b[j1:j2] should be inserted at a[i1:i1], i1==i2 in this
+// case.
 //
 // 'e' (equal):    a[i1:i2] == b[j1:j2]
 func (m *SequenceMatcher) GetOpCodes() []OpCode {
@@ -427,7 +434,13 @@ func (m *SequenceMatcher) GetGroupedOpCodes(n int) [][]OpCode {
 	if codes[len(codes)-1].Tag == 'e' {
 		c := codes[len(codes)-1]
 		i1, i2, j1, j2 := c.I1, c.I2, c.J1, c.J2
-		codes[len(codes)-1] = OpCode{c.Tag, i1, min(i2, i1+n), j1, min(j2, j1+n)}
+		codes[len(codes)-1] = OpCode{
+			c.Tag,
+			i1,
+			min(i2, i1+n),
+			j1,
+			min(j2, j1+n),
+		}
 	}
 	nn := n + n
 	groups := [][]OpCode{}
